@@ -46,6 +46,8 @@
 #include <cstring>
 #include <iostream>
 #include <signal.h>
+#include <time.h>
+#include <sys/time.h>
 
 #include <libgearman/gearman.h>
 #include <boost/program_options.hpp>
@@ -68,6 +70,10 @@ struct reverse_worker_options_t
 #ifndef __INTEL_COMPILER
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #endif
+
+struct timeval time_start, time_end;
+int64_t total_time;
+FILE *worker_time;
 
 /*
 * work function: reverse the received word
@@ -269,14 +275,21 @@ static gearman_return_t prepare_worker(gearman_job_st *job, void *context)
     std::cout.write(workload, workload_size);
     std::cout << std::endl;
   }
-
-  std::cout<<"thread "<<prepare_begin/200<<std::endl;
+  int thread_num = prepare_begin/prepare_num;
+  std::cout<<"thread "<<thread_num<<std::endl;
   char buffer[1024];
-  sprintf(buffer,"./prepare %d %d %d",prepare_begin, prepare_num, prepare_begin/200);
+  gettimeofday(&time_start, NULL);
+  sprintf(buffer,"/root/cx_src/src/prepare_N /tmp/test/googlebooks-eng-all-5gram-20090715- %d %d /tmp/data /tmp/result/ino.txt %d",prepare_begin, prepare_num, thread_num);
   if(system(buffer) == -1){
     fprintf(stderr, "Fail to execute command: \"%s\"\n",buffer);
   }
-	
+  gettimeofday(&time_end, NULL);
+  total_time = (int64_t) (time_end.tv_sec - time_start.tv_sec) * 1000000 + time_end.tv_usec - time_start.tv_usec;
+  if ( (worker_time = fopen("/tmp/work_time.txt","a")) == NULL )
+  {
+	  fprintf(worker_time, "worker %d prepare time: %"PRId64"us", thread_num, total_time);
+  }
+  fclose(worker_time);
   return GEARMAN_SUCCESS;
 }
 
@@ -392,11 +405,12 @@ static gearman_return_t merge_worker(gearman_job_st *job, void *context)
   }
 
   char buffer[1024];
-  sprintf(buffer,"./merge %d %d",merge_begin,merge_end);
+  sprintf(buffer,"/root/cx_src/src/merge_N /tmp/data /tmp/result/ino.txt /tmp/result/lno.txt /tmp/result/cdo.txt 4 %d %d",merge_begin,merge_end);
+
   if(system(buffer) == -1){
     fprintf(stderr, "Fail to execute command: \"%s\"\n",buffer);
   }
-	
+
   return GEARMAN_SUCCESS;
 }
 

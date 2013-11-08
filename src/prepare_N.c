@@ -17,8 +17,8 @@ struct rlimit rlim;
 int
 main(int argc, char *argv[]) {
 	if (argc != 7) {
-		fprintf(stderr, "Usage: ./prepare [file_prefix] [from_file_num] [number_of_files] [out_dir_name] [item_#_file] [temp_prefix_n]\n");
-		// /root/cx_src/src/prepare_test /tmp/test/googlebooks-eng-all-5gram-20090715- 0 200 /tmp/data /tmp/result/ino.txt 0
+		fprintf(stderr, "Usage: ./prepare_N [file_prefix] [from_file_num] [number_of_files] [out_dir_name] [item_#_file] [temp_prefix_n]\n");
+		// /root/cx_src/src/prepare_N /tmp/test/googlebooks-eng-all-5gram-20090715- 0 200 /tmp/data /tmp/result/ino.txt 0
 		return -1;
 	}
 

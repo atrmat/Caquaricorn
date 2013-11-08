@@ -17,8 +17,8 @@ struct rlimit rlim;
 int
 main(int argc, char *argv[]) {
 	if (argc != 8) {
-		fprintf(stderr, "Usage: ./prepare [out_dir_name 1] [item_#_file 2] [length_#_file 3] [count_dist_file 4] [number_of_temp_prefix 5] [from_temp_n] [to_temp_n]\n");
-		// /root/cx_src/src/prepare_test2 /tmp/data /tmp/result/ino.txt /tmp/result/lno.txt /tmp/result/cdo.txt 3 0 1
+		fprintf(stderr, "Usage: ./merge_N [out_dir_name 1] [item_#_file 2] [length_#_file 3] [count_dist_file 4] [number_of_temp_prefix 5] [from_temp_n] [to_temp_n]\n");
+		// /root/cx_src/src/merge_N /tmp/data /tmp/result/ino.txt /tmp/result/lno.txt /tmp/result/cdo.txt 3 0 1
 		return -1;
 	}
 	if ((itf = fopen(argv[2], "a")) == NULL) {
@@ -38,6 +38,7 @@ main(int argc, char *argv[]) {
 			if ((tsf[i] = fopen(buffer, "r")) == NULL) {
 				fprintf(stderr, "Failed to open file \"%s\" for reading temp strings\n", buffer);
 				//continue;
+				//break;
 				return -1;
 			}
 			while (fscanf(tsf[i], "%"PRId64"\t", &itemn) != EOF) {

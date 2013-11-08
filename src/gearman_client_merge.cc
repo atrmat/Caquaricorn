@@ -148,33 +148,19 @@ int main(int args, char *argv[])
   gearman_task_attr_t workload= gearman_task_attr_init_background(GEARMAN_JOB_PRIORITY_NORMAL);
 
   gearman_task_st *task[10];
-  char job_argument[10][10] = {"0-25;", "25-25;", "50-25;", "75-25;", "0-255;", "256-511;", "512-767;", "75-25;"};
+  char job_argument[10][10] = {"0-25;", "25-25;", "50-25;", "75-25;", "0-255;", "256-511;", "512-767;", "768-1023;"};
   gearman_argument_t values[]= {
-    //gearman_argument_make(0, 0, text_to_echo.c_str(), text_to_echo.size()),
-	//prepare
-//	gearman_argument_make(0, 0, "0-200;", sizeof("0-200;")),
-//	gearman_argument_make(0, 0, "200-200;", sizeof("200-200;")),
-//	gearman_argument_make(0, 0, "400-200;", sizeof("400-200;")),
-//	gearman_argument_make(0, 0, "600-200;", sizeof("600-200;")),
-	gearman_argument_make(0, 0, job_argument[0], sizeof(job_argument[0])),
-	gearman_argument_make(0, 0, job_argument[1], sizeof(job_argument[1])),
-	gearman_argument_make(0, 0, job_argument[2], sizeof(job_argument[2])),
-	gearman_argument_make(0, 0, job_argument[3], sizeof(job_argument[3])),
+	//merge
 	gearman_argument_make(0, 0, job_argument[4], sizeof(job_argument[4])),
 	gearman_argument_make(0, 0, job_argument[5], sizeof(job_argument[5])),
 	gearman_argument_make(0, 0, job_argument[6], sizeof(job_argument[6])),
 	gearman_argument_make(0, 0, job_argument[7], sizeof(job_argument[7])),
-	
-	//merge
-//	gearman_argument_make(0, 0, "0-255;", sizeof("0-255;")),
-//	gearman_argument_make(0, 0, "256-511;", sizeof("256-511;")),
-//	gearman_argument_make(0, 0, "512-767;", sizeof("512-767;")),
-//	gearman_argument_make(0, 0, "768-1023;", sizeof("768-1023;")),
     gearman_argument_make(0, 0, 0, 0)
   };
 
   int i = 0;
   int task_num = 8;// set the task num
+  /*
   //prepare
   while (i < task_num/2)
   {
@@ -186,10 +172,10 @@ int main(int args, char *argv[])
 	  }
 	  i++;
   }
-  /*
+  */
+  
   //merge
-  i = 4;
-  while (i < task_num)
+  while (i < task_num/2)
   {  
 	  if ((task[i]= gearman_execute(&client, util_literal_param("merge_N"), NULL, 0, &workload, &values[i], 0)) == NULL)
 	  {
@@ -199,7 +185,7 @@ int main(int args, char *argv[])
 	  }
 	  i++;
   }
-  */
+  
   int exit_code= EXIT_SUCCESS;
   i = 0;
   while(i < task_num/2)
