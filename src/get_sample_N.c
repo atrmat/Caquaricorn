@@ -14,7 +14,7 @@ get_sample(char *dir, int size, char *temp_N) {
 
 	//for (i = pos = 0; i < TEMP_N; ++i)
 	{
-		i = atoi(temp_N);
+		i = atoi(temp_N); //open the temp file N
 		pos = 0;
 		sprintf(buffer, "%s/%s%d.txt", dir, TEMP_PREFIX, i);
 		if ((file = fopen(buffer, "r")) == NULL) {
@@ -22,6 +22,7 @@ get_sample(char *dir, int size, char *temp_N) {
 			return -1;
 		}
 		for (itemn = 0; fgets(buffer, BUFFER_SIZE, file) != NULL; ) {
+			// split each buffer and save it into the temp array
 			for (j = strlen(buffer) - 1; j > 0 && (buffer[j] == '\r' || buffer[j] == '\n'); --j)
 				buffer[j] = 0;
 			for (j = 0; buffer[j] && buffer[j] != '\t'; ++j);
@@ -30,7 +31,9 @@ get_sample(char *dir, int size, char *temp_N) {
 				continue;
 			strcpy(temp[itemn++], buffer);
 		}
+		// itemn is the string num of this temp file
 		fclose(file);
+		// randomize the temp array into the samples array
 		for (j = 0; j < per; ++j) {
 			g = j + rand() % (itemn - j);
 			item[pos].key = pos;
@@ -59,8 +62,9 @@ main(int argc, char *argv[]) {
 	sprintf(buffer,"%s/%s%s", argv[1], "index_sample_", argv[2]);
 	fprintf(stdout, "\n\tGenerating the index samples to \"%s\"...", buffer);
 	file = fopen(buffer, "w");
-	for (i = 0; i < DISK_INDEX_SIZE; ++i) {
-		j = i + rand() % (DISK_INDEX_SIZE - i);
+	int per = DISK_INDEX_SIZE/ TEMP_N;//
+	for (i = 0; i < per; ++i) {
+		j = i + rand() % (per - i);
 		fprintf(file, "%s\n", samples[item[j].key]);
 		item[j].key = item[i].key;
 	}
@@ -73,8 +77,9 @@ main(int argc, char *argv[]) {
 	sprintf(buffer,"%s/%s%s", argv[1],"update_sample_", argv[2]);
 	fprintf(stdout, "\n\tGenerating the update samples to \"%s\"...", buffer);
 	file = fopen(buffer, "w");
-	for (i = 0; i < DISK_UPDATE_SIZE; ++i) {
-		j = i + rand() % (DISK_UPDATE_SIZE - i);
+	per = DISK_UPDATE_SIZE / TEMP_N;//
+	for (i = 0; i < per; ++i) {
+		j = i + rand() % (per - i);
 		for (k = 0; samples[item[j].key] && samples[item[j].key][k] != '\t'; ++k);
 		switch (item[j].value) {
 			case 0:

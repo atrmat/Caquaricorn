@@ -19,17 +19,18 @@ int
 main(int argc, char *argv[]) {
 	if (argc != 5) {
 		fprintf(stderr, "Usage: ./jbc_build [temp_dir_name] [btree_file_name] [btree_building_time] [btreen] \n");
-		// /root/cx_src/src/jbc_build_N /tmp/data/ /tmp/tmpbtree /tmp/result/jbt.txt 0
+		// /root/cx_src/src/jbc_build_N /tmp/data/ /tmp/tmpbtree /tmp/result/jbt.txt i
 		return -1;
 	}
-	if ((bbt = fopen(argv[3], "w")) == NULL) {
-		fprintf(stderr, "Failed to open file \"%s\" for recording running time\n", argv[3]);
+	sprintf(buffer,"%s%s",argv[3],argv[4]);
+	if ((bbt = fopen(buffer, "w")) == NULL) {
+		fprintf(stderr, "Failed to open file \"%s\" for recording running time\n", buffer);
 		return -1;
 	}
 	srand((unsigned)time(NULL));
 	sprintf(buffer,"%s%s",argv[2],argv[4]);
 	if ((btree = open(buffer, O_CREAT | O_TRUNC | O_WRONLY, 0766)) < 0) {
-		fprintf(stderr, "Failed to open file \"%s\" for writing BTree\n", argv[2]);
+		fprintf(stderr, "Failed to open file \"%s\" for writing BTree\n", buffer);
 		return -1;
 	}
 	head_N.btreen = atoi(argv[4]);// the btree num
