@@ -46,7 +46,7 @@ int main()
 	if (!(bloom = new_counting_bloom(CAPACITY, ERROR_RATE, bloom_file))) {
         	fprintf(stderr, "ERROR: Could not create bloom filter: %s \n",bloom_file);
         	return TEST_FAIL;
-    	}
+    }
 	if (!(fp = fopen(words_file, "r"))) {
 		fprintf(stderr, "ERROR: Could not open words file\n");
 		return TEST_FAIL;
@@ -72,6 +72,37 @@ int main()
 		result = counting_bloom_check(bloom, word, strlen(word));
 		if (!result)
 			fprintf(stderr, "the item %s no exist!\n",word);
+	}
+	free_counting_bloom(bloom);
+	fprintf(stderr, "reopen the bloom filter\n");
+	if (!(bloom = new_counting_bloom_from_file(CAPACITY, ERROR_RATE, bloom_file))) {
+        	fprintf(stderr, "ERROR: Could not create bloom filter from file: %s \n",bloom_file);
+        	return TEST_FAIL;
+    }
+	fseek(fp, 0, SEEK_SET);
+	fprintf(stderr, "check all items in the bloom filter\n");
+	for (i = 0; fgets(word, sizeof(word), fp) && (i < CAPACITY); i++) {
+		chomp_line(word);
+		result = counting_bloom_check(bloom, word, strlen(word));
+		if (!result)
+			fprintf(stderr, "the item %s no exist!\n",word);
+	}
+	fprintf(stderr, "add the items in the bloom filter\n");
+	fseek(fp, 0, SEEK_SET);
+	for (i = 0; fgets(word, sizeof(word), fp) && (i < CAPACITY); i++) {
+		if (i % 5 == 0) {
+			chomp_line(word);
+			fprintf(stderr, "add the n/5 item %s \n",word);
+			counting_bloom_add(bloom, word, strlen(word));
+		}
+	}
+	fseek(fp, 0, SEEK_SET);
+	fprintf(stderr, "check all items in the bloom filter\n");
+	for (i = 0; fgets(word, sizeof(word), fp) && (i < CAPACITY); i++) {
+		chomp_line(word);
+		result = counting_bloom_check(bloom, word, strlen(word));
+		if (result)
+			fprintf(stderr, "the item %s exist!\n",word);
 	}
 	free_counting_bloom(bloom);
 	fclose(fp);	
