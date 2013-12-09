@@ -1,0 +1,66 @@
+###################################################################################
+Preparation:
+1. configure ssh on each node of the hadoop cluster:
+$ssh-keygen -t rsa
+$ssh-copy-id {user}@{node's IP}
+
+2. modify the /etc/hosts
+add all nodes' IP and hostname to the file /etc/hosts
+
+3. disable the fire wall
+$ ufw disable
+
+4. install apache2
+$ sudo apt-get install apache2
+###################################################################################
+Configuration:
+1. configure the 7 configuration files:
+~/hadoop-2.2.0-src/etc/hadoop/hadoop-env.sh
+~/hadoop-2.2.0-src/etc/hadoop/yarn-env.sh
+~/hadoop-2.2.0-src/etc/hadoop/slaves
+~/hadoop-2.2.0-src/etc/hadoop/core-site.xml
+~/hadoop-2.2.0-src/etc/hadoop/hdfs-site.xml
+~/hadoop-2.2.0-src/etc/hadoop/mapred-site.xml
+~/hadoop-2.2.0-src/etc/hadoop/yarn-site.xml
+note: sample configure files are attached.
+
+2. modify the JAVA_HOME path in the file ~/hadoop-2.2.0-src/etc/hadoop/hadoop-env.sh
+===========================================================
+export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-amd64
+===========================================================
+note: if configured in /etc/profile, and sometimes may ineffect.
+
+3. mkdir the folders: 
+~/hadoop-2.2.0/dfs/name
+~/hadoop-2.2.0/dfs/data
+~/hadoop-2.2.0/dfs/temp
+
+4. modify the file : ~/hadoop-2.2.0-src/etc/hadoop/slaves
+add the slave nodes' IP into this file.
+
+After all, cp the ~/hadoop-2.2.0/etc/hadoop/ to the /etc/, or you can modify the 
+configure file path in the file  ~/hadoop-2.2.0-src/etc/hadoop/hadoop-env.sh :
+===========================================================
+export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-"/etc/hadoop"}
+===========================================================
+
+###################################################################################
+Start the hadoop cluster:
+1. format the namenode:
+~/hadoop-2.2.0-src/bin/hdfs namenode –format
+
+2. start the dfs:
+~/hadoop-2.2.0-src/sbin/start-dfs.sh
+
+3. start the yarn:
+~/hadoop-2.2.0-src/sbin/start-yarn.sh
+
+4. visit the website: {master's IP}:50070
+
+5. look the cluster's state:
+$jps
+
+###################################################################################
+Reference:
+1. http://blog.csdn.net/licongcong_0224/article/details/12972889
+###################################################################################
