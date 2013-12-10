@@ -1,0 +1,19 @@
+###################################################################################
+System requirements:
+Java 1.6.x or greater
+Maven 3.x to build the source code
+Hadoop 0.20.0 or greater
+###################################################################################
+Get the source code:
+$svn co http://svn.apache.org/repos/asf/mahout/trunk
+$mvn compile
+$mvn install
+$mvn clean install -DskipTests=true
+###################################################################################
+You will see BUILD SUCCESSFUL once all the corresponding tasks are through. 
+The job will be generated in $MAHOUT_HOME/examples/target/ 
+and it's name will contain the $MAHOUT_VERSION number. 
+###################################################################################
+Reference:
+1. https://cwiki.apache.org/confluence/display/MAHOUT/Quickstart
+###################################################################################
