@@ -1,0 +1,14 @@
+###################################################################################
+using java api to operate the hdfs
+###################################################################################
+Reference:
+1.http://hadoop.apache.org/docs/stable/api/index.html
+2.http://blog.csdn.net/whuqin/article/details/6662378
+3.http://www.front2end.cn/blog/how-to-recoverable-delete-data-with-hdfs-api.html
+4.http://www.cnblogs.com/lucius/archive/2013/11/21/3435291.html
+5.http://tianhailong.com/%E5%88%A9%E7%94%A8hdfs-java-api%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E6%93%8D%E4%BD%9C.html
+6.http://f.dataguru.cn/thread-197832-1-1.html
+7.http://blog.pureisle.net/archives/1806.html
+8.http://my.oschina.net/vigiles/blog/132282
+9.http://blog.csdn.net/liuxingjiaofu/article/details/7094131
+###################################################################################

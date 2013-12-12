@@ -1,0 +1,13 @@
+###################################################################################
+eclipse connect to hadoop cluster
+1. eclipse plugin
+https://github.com/winghc/hadoop2x-eclipse-plugin
+
+###################################################################################
+Reference:
+1.http://www.cnblogs.com/yhql/p/eclipes%E8%BF%9E%E6%8E%A5Hadoop%E9%9B%86%E7%BE%A4-%E6%89%A7%E8%A1%8Cmapreduce%E7%A8%8B%E5%BA%8F.html
+2.http://ganliang13.iteye.com/blog/1880077
+3.http://my.oschina.net/cxw1990/blog/131872
+4.http://hadoop.apache.org/docs/r2.2.0/hadoop-project-dist/hadoop-hdfs/LibHdfs.html
+5.http://weixiaolu.iteye.com/blog/1402919 
+###################################################################################
