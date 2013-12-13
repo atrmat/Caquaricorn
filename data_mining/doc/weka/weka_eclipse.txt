@@ -1,0 +1,67 @@
+###################################################################################
+install weka and using in eclipse
+weka 3.6
+Eclipse Java EE IDE (Kepler Service Release 1)
+JDK 1.7.0_45-b18
+###################################################################################
+1. download weka 3.6 from: 
+http://www.cs.waikato.ac.nz/ml/weka/downloading.html
+
+2. new a java project in eclipse, and add the following jar into this project:
+weka.jar
+weka-src.jar
+###################################################################################
+Weka test demo:
+=================================================================
+package weka;
+import java.io.File;
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.*;
+
+public class wekaTest {
+	public static void main(String[] args){
+		Instances ins = null;
+		Classifier cfs = null;
+		
+		try{
+			// read the training set
+			File file = new File("H:\\Weka-3-6\\data\\datacontact-lenses.arff");
+			ArffLoader loader = new ArffLoader();
+			loader.setFile(file);
+			
+			ins = loader.getDataSet();
+			ins.setClassIndex(ins.numAttributes() - 1);
+			
+			// initializing the classifier
+			cfs = (Classifier)Class.forName("weka.classifiers.bayes.NaiveBayes").newInstance();
+			
+			// Using the training set for classifying
+			cfs.buildClassifier(ins);
+			
+			// using testing  set for testing the efficiency of the classifier
+			Instance testInst;
+			
+			Evaluation testingEvaluation = new Evaluation(ins);
+			int length = ins.numInstances();
+			
+			for(int i = 0; i < length; i++){
+				testInst = ins.instance(i);
+				testingEvaluation.evaluateModelOnceAndRecordPrediction(cfs, testInst);
+			}
+			
+			// print the classifying results
+			System.out.println("分类正确率:" + (1 - testingEvaluation.errorRate()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+=================================================================
+###################################################################################
+Reference:
+1.http://www.cs.waikato.ac.nz/ml/weka/downloading.html
+2.http://blog.csdn.net/fantasy_wxe/article/details/16360383
+###################################################################################
