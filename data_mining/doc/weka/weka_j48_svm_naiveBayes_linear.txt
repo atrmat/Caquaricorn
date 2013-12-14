@@ -1,0 +1,127 @@
+###################################################################################
+using libsvm in weka
+###################################################################################
+Environment:
+weka 3.6
+libsvm 3.17
+jdk 1.7.0_45
+###################################################################################
+Test demo: using the classfier "J48" "NaiveBayes" "SVM" "LibLINEAR"
+===================================================================
+package weka;
+
+import java.util.Random;  
+
+import weka.attributeSelection.CfsSubsetEval;  
+import weka.attributeSelection.GreedyStepwise;  
+import weka.classifiers.Evaluation;  
+import weka.classifiers.bayes.NaiveBayes;  
+import weka.classifiers.functions.LibLINEAR;  
+import weka.classifiers.functions.LibSVM;  
+import weka.classifiers.meta.AttributeSelectedClassifier;  
+import weka.classifiers.trees.J48;  
+import weka.core.Instances;  
+import weka.core.converters.ConverterUtils.DataSource;  
+import weka.filters.Filter;  
+import weka.filters.supervised.attribute.AttributeSelection;  
+  
+public class LibSVMTest {  
+  
+    private Instances m_instances = null;  
+    private Instances selectedIns;  
+     
+    public static void main( String[] args ) throws Exception {  
+        LibSVMTest filter = new LibSVMTest();  
+             
+            filter.getFileInstances( "H:/Weka-3-6/data/soybean.arff");  
+            filter.selectAttUseFilter();
+            // using the classfier "J48" "NaiveBayes" "SVM" "LibLINEAR"
+            filter.selectAttUseMC("LibLINEAR");  
+    }  
+         
+    public void getFileInstances( String fileName ) throws Exception {  
+        DataSource frData = new DataSource( fileName );  
+        m_instances = frData.getDataSet();      
+        m_instances.setClassIndex( m_instances.numAttributes() - 1 );  
+    }  
+     
+    public void selectAttUseFilter() throws Exception {  
+        AttributeSelection filter = new AttributeSelection();  // package weka.filters.supervised.attribute!  
+        CfsSubsetEval eval = new CfsSubsetEval();  
+        GreedyStepwise search = new GreedyStepwise();  
+        filter.setEvaluator(eval);  
+        filter.setSearch(search);  
+        filter.setInputFormat( m_instances );  
+         
+//        System.out.println( "number of instance attribute = " + m_instances.numAttributes() );           
+        selectedIns = Filter.useFilter( m_instances, filter);  
+//        System.out.println( "number of selected instance attribute = " + selectedIns.numAttributes() );  
+        for( int i = 0; i < selectedIns.numInstances(); i++ ) {   
+//            System.out.println( selectedIns.instance( i ) );  
+        }  
+    }  
+     
+    public void selectAttUseMC(String classiferName) throws Exception {    
+         AttributeSelectedClassifier classifier = new AttributeSelectedClassifier();  
+         CfsSubsetEval eval = new CfsSubsetEval();  
+         GreedyStepwise search = new GreedyStepwise();
+         // 10-fold cross-validation 
+         Evaluation evaluation = new Evaluation( selectedIns );
+         System.out.println("using classifer : "+classiferName);
+         switch(classiferName)
+         {
+	         case "J48":{
+	        	 J48 j48base = new J48();
+	        	 classifier.setClassifier(j48base);
+	        	 classifier.setEvaluator( eval );  
+	             classifier.setSearch( search );
+	        	 evaluation.crossValidateModel(j48base, m_instances, 10, new Random(1));   
+	        	 break;
+	         }
+	         case "NaiveBayes":{
+	        	 NaiveBayes nb = new NaiveBayes(); 
+	        	 classifier.setClassifier(nb);
+	        	 classifier.setEvaluator( eval );  
+	             classifier.setSearch( search );
+	        	 evaluation.crossValidateModel(nb, m_instances, 10, new Random(1));   
+	        	 break;
+	         }
+	         case "SVM":{// need to add libsvm to the classpath
+	        	 LibSVM svm = new LibSVM();
+	        	 classifier.setClassifier(svm);
+	        	 classifier.setEvaluator( eval );  
+	             classifier.setSearch( search );
+	        	 evaluation.crossValidateModel(svm, m_instances, 10, new Random(1));   
+	        	 break;
+	         }
+	         case "LibLINEAR":{// need to add liblinear to the classpath
+	        	 LibLINEAR linear = new LibLINEAR();
+	        	 classifier.setClassifier(linear);
+	        	 classifier.setEvaluator( eval );  
+	             classifier.setSearch( search );
+	        	 evaluation.crossValidateModel(linear, m_instances, 10, new Random(1));   
+	        	 break;
+	         }
+	         default:
+	        	 System.out.println("no classifer specialized!");
+         }
+         
+         System.out.println("正确率为：" + (1-evaluation.errorRate()));  
+         System.out.println( evaluation.toSummaryString()); 
+    }  
+  
+}  
+===================================================================
+
+###################################################################################
+Reference:
+1. http://bbs.sciencenet.cn/home.php?mod=space&uid=264887&do=blog&id=324607
+2. http://zwustudy.iteye.com/blog/1847574
+3. http://en.it-usenet.org/thread/10890/28981/
+
+weka for libsvm
+1. http://weka.wikispaces.com/LibSVM
+
+libsvm
+1. http://www.csie.ntu.edu.tw/~cjlin/libsvm/index.html
+###################################################################################
