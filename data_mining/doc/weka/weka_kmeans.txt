@@ -1,0 +1,60 @@
+###################################################################################
+import java.io.File;
+
+import weka.clusterers.SimpleKMeans;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.ArffLoader;
+import weka.core.converters.CSVLoader;
+
+/**
+    聚类算法在数据挖掘里面被称之为无监督学习（unsupervised learning），
+    这是与分类算法（supervised learning）相对的。
+    在它们两者之间还一种叫做半监督学习（semi-supervised learning）
+    所谓无监督学习就是在预先不知道样本类别的情况下，由聚类算法来判别样本的类别的一种学习方法。 
+    聚类算法的一般过程分为： 
+1. 读入需预测样本 
+2. 初始化聚类算法（并设置参数） 
+3. 使用聚类算法对样本进行聚类 
+4. 打印聚类结果 
+ * */
+public class KmeansTest {
+	public static void main(String[] args) {  
+        Instances ins = null;  
+        Instances tempIns = null;  
+        SimpleKMeans KM = null;  
+        try {  
+            // 1.读入样本  
+//            File file = new File("H://Weka-3-6//data//cpu.arff"); 
+            File file = new File("H://mobile.csv");  
+            ArffLoader loader = new ArffLoader();
+            CSVLoader csvloader = new CSVLoader();
+//            loader.setFile(file); 
+//            ins = loader.getDataSet();  
+            csvloader.setFile(file); 
+            ins = csvloader.getDataSet(); 
+            // 2.初始化聚类器  
+            KM = new SimpleKMeans();  
+            KM.setNumClusters(8);// 设置类别数量  
+  
+            // 3.使用聚类算法对样本进行聚类  
+            KM.buildClusterer(ins);  
+              
+            // 4.打印聚类结果  
+            tempIns = KM.getClusterCentroids();  
+//            System.out.println("CentroIds: " + tempIns);  
+//            System.out.println("-------------------\n");  
+            for (int i = 0; i < tempIns.numInstances(); i++) {  
+                Instance temp = tempIns.instance(i);  
+//                System.out.println(temp.numAttributes());  
+                for (int j = 0; j < temp.numAttributes(); j++) {  
+                    System.out.print(temp.value(j)+ ","); 
+                }  
+                System.out.println("");  
+            }  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+    }  
+}
+###################################################################################
