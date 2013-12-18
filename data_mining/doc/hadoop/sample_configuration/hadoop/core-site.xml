@@ -32,4 +32,9 @@
 	<name>hadoop.proxyuser.hduser.groups</name> 
 	<value>*</value> 
 </property>
+<!-- file system properties -->
+<property>
+	<name>fs.default.name</name>
+	<value>hdfs://192.168.1.28:9000</value>
+</property>
 </configuration>

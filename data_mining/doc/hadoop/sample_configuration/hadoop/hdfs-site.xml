@@ -32,4 +32,57 @@
 		<name>dfs.webhdfs.enabled</name> 
 		<value>true</value> 
 	</property>
+	<property>
+		<name>dfs.append.support</name>
+		<value>true</value>
+	</property>
+	<property>
+		<name>dfs.federation.nameservice.id</name>
+		<value>ns1</value>
+	</property>
+	<property>
+		<name>dfs.namenode.backup.address.ns1</name>
+		<value>192.168.1.28:50100</value>
+	</property>
+	<property>
+		<name>dfs.namenode.backup.http-address.ns1</name>
+		<value>192.168.1.28:50105</value>
+	</property>
+	<property>
+		<name>dfs.federation.nameservices</name>
+		<value>ns1</value>
+	</property>
+	<property>
+		<name>dfs.namenode.rpc-address.ns1</name>
+		<value>192.168.1.28:9000</value>
+	</property>
+	<property>
+		<name>dfs.namenode.rpc-address.ns2</name>
+		<value>192.168.1.28:9000</value>
+	</property>
+	<property>
+		<name>dfs.namenode.http-address.ns1</name>
+		<value>192.168.1.28:23001</value>
+	</property>
+
+	<property>
+		<name>dfs.namenode.http-address.ns2</name>
+		<value>192.168.1.28:13001</value>
+	</property>
+	<property>
+		<name>dfs.namenode.secondary.http-address.ns1</name>
+		<value>192.168.1.28:23002</value>
+	</property>
+	<property>
+		<name>dfs.namenode.secondary.http-address.ns2</name>
+		<value>192.168.1.28:23002</value>
+	</property>
+	<property>
+		<name>dfs.namenode.secondary.http-address.ns1</name>
+		<value>192.168.1.28:23003</value>
+	</property>
+	<property>
+		<name>dfs.namenode.secondary.http-address.ns2</name>
+		<value>192.168.1.28:23003</value>
+	</property>
 </configuration>
