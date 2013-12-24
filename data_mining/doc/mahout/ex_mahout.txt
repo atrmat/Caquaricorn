@@ -149,7 +149,7 @@ Usage:
 ================================================================
 
 1. execute the fuzzy k-means job:
-$MAHOUT_HOME/org.apache.mahout.clustering.syntheticcontrol.fuzzykmeans.Job 
+$MAHOUT_HOME/bin/mahout org.apache.mahout.clustering.syntheticcontrol.fuzzykmeans.Job 
   -i /testdata -o /fuzzykmeans_result --t1 0.1 --t2 0.2 --maxIter 100 --m 2
 
 2. format the result for human readable:

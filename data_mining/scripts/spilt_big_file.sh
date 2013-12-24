@@ -33,7 +33,7 @@ done
 shift $(($OPTIND - 1))
 
 if [ -z "$SPLIT_FILE" ]; then  
-    echo "You must specify SPILT_FILE with -s option"
+    echo "You must specify SPLIT_FILE with -s option"
     exit
 fi
 if [ -z "$FILES_PREFIX" ]; then  
