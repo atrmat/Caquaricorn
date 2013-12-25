@@ -7,9 +7,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
-* parse the property file, get the config of hadoop.properties
-* generate jar in Eclipse, 
-* then execute it by: java -jar {Path to readHadoopProperties.jar}
+* read the config from the hadoop.properties file
 */
 public class readHadoopProperties {
 
