@@ -1,0 +1,33 @@
+###################################################################################
+The DAO to op in HDFS
+###################################################################################
+Environment:
+jdk 1.7
+hadoop 2.2.0 64bit
+###################################################################################
+src:
+testHdfsDAO.java
+###################################################################################
+using the Hdfs API to access the HDFS.
+1. following variables is parsed from a property file: hadoop.properties
+	private static String hdfs_ip;
+	private static String core_site_conf;
+	private static String hdfs_site_conf;
+	private static String mapred_site_conf;
+	private static String hadoop_user;
+	private static String hadoop_home;
+
+2. the HdfsDAO offers following ops:
+	mkdirs - mkdirs in HDFS 
+	rmr - rmdir in HDFS
+	ls - list the folder in HDFS
+	createFile - create file in HDFS
+	copyFile - copy local file to remote
+	download - download remote file to local
+	cat - cat remote file in HDFS
+
+3. package to generate jar by Eclipse, and upload it to the server, put the config
+hadoop.properties in the same folder, then execute it:
+	$HADOOP_HOME/bin/hadoop jar {Path to HdfsDAO.jar}
+
+###################################################################################
