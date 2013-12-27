@@ -60,6 +60,14 @@ Start the hadoop cluster:
 5. look the cluster's state:
 $jps
 
+6. start the mr jobhistory daemon:
+$~/hadoop-2.2.0-src/sbin/mr-jobhistory-daemon.sh --config ~/hadoop-2.2.0-src/etc/hadoop
+ start historyserver
+Usage: mr-jobhistory-daemon.sh [--config <conf-dir>] (start|stop) <mapred-command>
+
+7. off the safemode
+$~/hadoop-2.2.0-src/bin/hadoop dfsadmin -safemode leave
+
 ###################################################################################
 Reference:
 1. http://blog.csdn.net/licongcong_0224/article/details/12972889
