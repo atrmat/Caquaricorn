@@ -3,16 +3,16 @@
 SPLIT_FILE=
 FILES_PREFIX=
 FILES_NUM=
-
+FILES_TYPE=
 usage()
 {
-    echo "Usage: `basename $0` [-s] split_file [-p] files_prefix [-n] files_num, default files num is 10"
+    echo "Usage: `basename $0` [-s] split_file [-p] files_prefix [-n] files_num [-t] files_type, default files num is 10"
     exit 1
 }
 
 [ $# -eq 0 ] && usage
 
-while getopts :s:p:n: OPTION
+while getopts :s:p:n:t: OPTION
 do
     case $OPTION in
         s)
@@ -23,6 +23,9 @@ do
             ;;
 	n)
 	    FILES_NUM=$OPTARG
+	    ;;
+	t)
+	    FILES_TYPE=$OPTARG
 	    ;;
         \?)               
             usage
@@ -52,4 +55,10 @@ LINE_NUM=`wc -l $SPLIT_FILE | gawk -F " " '{print $1}'`
 echo $LINE_NUM
 LINE_NUM=`expr $LINE_NUM / $FILES_NUM`
 echo $LINE_NUM
-split -l $LINE_NUM $SPLIT_FILE $FILES_PREFIX
+mkdir -p ./datafile
+cd datafile
+split -l $LINE_NUM $SPLIT_FILE $FILES_PREFIX -d
+for files in `ls`
+do 
+    mv $files `echo "$files.$FILES_TYPE" `
+done
