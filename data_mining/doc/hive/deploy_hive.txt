@@ -1,0 +1,75 @@
+###################################################################################
+Get source:
+
+$wget http://mirrors.cnnic.cn/apache/hive/stable/hive-0.11.0-bin.tar.gz
+###################################################################################
+Configure the Env:
+
+add the environment setting into the file: 
+$HIVE_HOME/bin/hive-config.sh
+=======================================================
+export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-amd64
+export HIVE_HOME=/usr/local/src/hive-0.11.0-bin
+export HADOOP_HOME=/usr/local/src/hadoop-2.2.0
+=======================================================
+
+###################################################################################
+Configure hive:
+
+add the config files in $HIVE_HOME/conf/
+hive-default.xml -> hive-site.xml
+hive-env.sh
+hive-exec-log4j.properties
+hive-log4j.properties
+
+and add the environment setttins(JAVA_HOME, HIVE_HOME, HADOOP_HOME) into the hive-env.sh
+###################################################################################
+Start hive:
+
+$HIVE_HOME/bin/hive
+###################################################################################
+Start the HiveServer:
+
+bin/hive --service hiveserver
+###################################################################################
+Test hive:
+
+start hive, and test in HQL command
+================================================
+hive> create TABLE pokes( id INT, name string);  
+hive> SHOW TABLES; 
+hive> select * from pokes; 
+hive> drop table pokes;
+================================================
+and you can find the table in HDFS by broswing the HDFS website
+
+###################################################################################
+Install BIRT plugin into the Eclipse:
+
+See: http://wiki.eclipse.org/BIRT_Update_Site_URL
+the connection url:
+
+jdbc:hive://{host IP}:{port, default is '10000'}/{DB name, default is 'default'}
+
+After installed the plugin, you can connect Hive in Eclipse, 
+and execute the HQL command.
+
+note: add all the lib in $HIVE/lib/ into the BIRT plugin's drivers, 
+and make sure that the HiveServer is already running!
+###################################################################################
+Connecting Hive by JDBC
+See: HiveClient.txt
+###################################################################################
+Reference:
+
+Hive
+1. http://blog.csdn.net/wyn_helloworld/article/details/10112211
+2. http://mmicky.blog.163.com/blog/static/1502901542013931102547770
+3. https://cwiki.apache.org/confluence/display/Hive/Home
+BIRT
+4. http://www.importnew.com/4276.html
+5. http://sunofmayat163.blog.163.com/blog/static/1945950932013619105217616/
+Hive-JDBC
+6. https://cwiki.apache.org/confluence/display/Hive/HiveClient#HiveClient-JDBCClientSampleCode
+7. https://cwiki.apache.org/confluence/display/Hive/HiveServer2+Clients#HiveServer2Clients-JDBC
+###################################################################################
