@@ -1,4 +1,11 @@
 ###################################################################################
+Environment:
+
+Hadoop 2.2.0
+Hive 0.11.0
+JDK 1.7
+Eclipse Kepler
+###################################################################################
 Get source:
 
 $wget http://mirrors.cnnic.cn/apache/hive/stable/hive-0.11.0-bin.tar.gz
@@ -47,18 +54,70 @@ and you can find the table in HDFS by broswing the HDFS website
 Install BIRT plugin into the Eclipse:
 
 See: http://wiki.eclipse.org/BIRT_Update_Site_URL
+Test the Hive-JDBC drivers, use the 'Database Development' in Eclipse, and in
+'ODA Data Sources', and new a 'Hive Data Source', then fill in the form with
 the connection url:
-
 jdbc:hive://{host IP}:{port, default is '10000'}/{DB name, default is 'default'}
+e.g., jdbc:hive://192.168.1.28:10000/default
 
 After installed the plugin, you can connect Hive in Eclipse, 
 and execute the HQL command.
 
-note: add all the lib in $HIVE/lib/ into the BIRT plugin's drivers, 
+Using BIRT to show your data:
+1. create a new 'Business Intelligence and Reporting Tools', 
+choose the 'Report Project'.
+2. create a new 'Report' in the 'Report Project'. 
+
+Note: add all the lib in $HIVE/lib/ into the BIRT plugin's drivers, 
 and make sure that the HiveServer is already running!
+Or you can manually add the drivers to this folder:
+eclipse\plugins\org.eclipse.birt.report.data.oda.jdbc_4.3.1.v201308301349\drivers 
 ###################################################################################
 Connecting Hive by JDBC
-See: HiveClient.txt
+
+Add the lib into your Eclipse project:
+#     hive-jdbc*.jar
+#     hive-service*.jar
+#     libfb303-0.9.0.jar
+#     libthrift-0.9.0.jar
+#     log4j-1.2.16.jar
+#     slf4j-api-1.6.1.jar
+#     slf4j-log4j12-1.6.1.jar
+#     commons-logging-1.0.4.jar
+#
+#
+# To run the program using kerberos secure mode, we need the following jars in the classpath
+#     hive-exec*.jar
+#     commons-configuration-1.6.jar
+#  and from hadoop
+#     hadoop-core*.jar
+#
+# To run the program in embedded mode, we need the following additional jars in the classpath
+# from hive/build/dist/lib
+#     hive-exec*.jar
+#     hive-metastore*.jar
+#     antlr-runtime-3.0.1.jar
+#     derby.jar
+#     jdo2-api-2.1.jar
+#     jpox-core-1.2.2.jar
+#     jpox-rdbms-1.2.2.jar
+# and from hadoop/build
+#     hadoop-core*.jar
+
+Note:
+Starting Hive Thrift Server :
+$HIVE_HOME/bin/hive --service hiveserver
+
+driverName : "org.apache.hadoop.hive.jdbc.HiveDriver";
+url: jdbc:hive://192.168.1.28:10000/default"
+
+the default column is sperated by '\x01', change it by add the command when create a
+new table:
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+e.g.,
+"create table " + tableName + " (key int, value string)"+"ROW FORMAT DELIMITED FIELDS TERMINATED BY ','"
+
+See: HiveJdbcClient.txt
 ###################################################################################
 Reference:
 
@@ -69,7 +128,19 @@ Hive
 BIRT
 4. http://www.importnew.com/4276.html
 5. http://sunofmayat163.blog.163.com/blog/static/1945950932013619105217616/
+6. http://blog.csdn.net/lfsf802/article/details/10051179
 Hive-JDBC
-6. https://cwiki.apache.org/confluence/display/Hive/HiveClient#HiveClient-JDBCClientSampleCode
-7. https://cwiki.apache.org/confluence/display/Hive/HiveServer2+Clients#HiveServer2Clients-JDBC
+7. https://cwiki.apache.org/confluence/display/Hive/HiveClient#HiveClient-JDBCClientSampleCode
+8. https://cwiki.apache.org/confluence/display/Hive/HiveServer2+Clients#HiveServer2Clients-JDBC
+9. http://yangshangchuan.iteye.com/blog/1950178
+
+Hive-Server
+10.http://www.w3c.com.cn/hive-server-2-%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E6%B5%8B%E8%AF%95
+
+Hive DDL DML SQL
+11.http://www.cnblogs.com/hzmark/p/hiveddldmlsql.html
+12.http://running.iteye.com/blog/908904
+13.https://cwiki.apache.org/confluence/display/Hive/LanguageManual%20DML#LanguageManualDML-Loadingfilesintotables
+14.http://hi.baidu.com/zhangxinandala/item/49752510cc7ad08789a95617
+15.http://www.cnblogs.com/likai198981/archive/2013/05/05/3061499.html
 ###################################################################################
