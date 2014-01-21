@@ -1,0 +1,46 @@
+###################################################################################
+Python crawl
+###################################################################################
+Environment:
+
+python 2.7.6
+beautifulsoup3
+ez_setup.py
+lxml-3.2.5
+rsa-3.1.1
+simplejson-3.3.2
+wxPython3.0
+###################################################################################
+Thinking line:
+
+1. simulate the broswer to login weibo and get data
+2. using the urllib2 to connect and load data from weibo site
+3. using beautifulsoup to resolve the page code
+###################################################################################
+Code:
+
+https://github.com/CnPaMeng/WeiboMsgBackupGUI
+###################################################################################
+Reference:
+
+登陆新浪微博&批量下载收藏内容[Python脚本实现]
+http://blog.csdn.net/wklken/article/details/7884529
+
+利用python实现新浪微博爬虫
+http://blog.csdn.net/monsion/article/details/7981366
+
+模拟登录新浪微博
+(Python)http://www.douban.com/note/201767245/
+
+Python实现网络爬虫
+http://kcclub.kingsoft.com/home.php?mod=space&uid=93&do=blog&id=890
+
+登陆新浪微博&批量下载收藏内容[Python脚本实现]
+http://1.wklken.sinaapp.com/?p=177
+
+python编写的新浪微博爬虫
+http://blog.csdn.net/zsrem/article/details/7917807
+
+Python:获取新浪微博用户的收听列表和粉丝列表
+http://blog.csdn.net/dyx1024/article/details/7461646
+###################################################################################
