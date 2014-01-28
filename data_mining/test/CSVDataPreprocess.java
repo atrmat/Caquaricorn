@@ -75,6 +75,12 @@ public class CSVDataPreprocess {
 				// else
 				// bw.write(csvTitle[i]+"\n");
 			}
+			// write the processed csv title
+//			bw.write("XDR ID,session Time,ClientAddress,ServerAddress,IpID,ClientPort,Connection Time,"
+//					+ "ClientTunnelAddress,ServerTunnelAddress,ClientToServerPackets,ServerToClientPackets,"
+//					+ "ClientToServerOctets,ServerToClientOctets,AverageResponseTime,TotalResp,"
+//					+ "SessionLastUpdateTime,appId,End User Address,"
+//					+ "MSISDN,IMSI,IMEI,APN,CELL/SAC,LAC/TAC/SID,RAC/NID,NumOfUpdates\n");
 			while ((line = reader.readLine()) != null) {
 				linenum++;
 				itemnum++;
@@ -84,6 +90,11 @@ public class CSVDataPreprocess {
 				// System.out.println(last);
 
 				for (int i = 0; i <= item.length - 1; i++) {
+					if (csvTitle[i].equals("EndPoinType|IpAddress|TeId")
+							|| csvTitle[i].equals("ECGI|RATType|TAC")
+							|| csvTitle[i].equals("BSID")
+							|| csvTitle[i].equals("IMSI|NSAPI"))
+						continue;
 					switch (csvTitle[i]) {
 					case "XDR ID":
 						if (!item[i].equals("")) {
@@ -111,6 +122,7 @@ public class CSVDataPreprocess {
 					case "ClientAddress":
 						if (!item[i].equals("")) {
 							itemnum++;
+//							itemLine += item[i] + ",";
 							itemLine += ip2long(item[i]) + ",";
 							// bw.write(ip2long(item[i])+",");
 						}
@@ -118,6 +130,7 @@ public class CSVDataPreprocess {
 					case "ServerAddress":
 						if (!item[i].equals("")) {
 							itemnum++;
+//							itemLine += item[i] + ",";
 							itemLine += ip2long(item[i]) + ",";
 							// bw.write(ip2long(item[i])+",");
 						}
@@ -155,6 +168,7 @@ public class CSVDataPreprocess {
 					case "ClientTunnelAddress":
 						if (!item[i].equals("")) {
 							itemnum++;
+//							itemLine += item[i] + ",";
 							itemLine += ip2long(item[i]) + ",";
 							// bw.write(ip2long(item[i])+",");
 						}
@@ -162,6 +176,7 @@ public class CSVDataPreprocess {
 					case "ServerTunnelAddress":
 						if (!item[i].equals("")) {
 							itemnum++;
+//							itemLine += item[i] + ",";
 							itemLine += ip2long(item[i]) + ",";
 							// bw.write(ip2long(item[i])+",");
 						}
@@ -237,9 +252,11 @@ public class CSVDataPreprocess {
 						break;
 					case "MSISDN":
 						if (!item[i].equals("")) {
-							itemnum++;
-							itemLine += item[i] + ",";
-							// bw.write(item[i]+",");
+							if (!item[i].equals(0)){
+								itemnum++;
+								itemLine += item[i] + ",";
+								// bw.write(item[i]+",");
+							}
 						}
 						break;
 					case "IMSI":
@@ -251,9 +268,11 @@ public class CSVDataPreprocess {
 						break;
 					case "IMEI":
 						if (!item[i].equals("")) {
-							itemnum++;
-							itemLine += item[i] + ",";
-							// bw.write(item[i]+",");
+							if (!item[i].equals(0)){
+								itemnum++;
+								itemLine += item[i] + ",";
+								// bw.write(item[i]+",");
+							}
 						}
 						break;
 					case "APN":
@@ -271,6 +290,24 @@ public class CSVDataPreprocess {
 							// bw.write("0"+",");
 						}
 						break;
+					case "CELL/SAC":
+						if (!item[i].equals("")){
+							itemnum++;
+							itemLine += item[i] + ",";
+						}
+						break;
+					case "LAC/TAC/SID":
+						if (!item[i].equals("")){
+							itemnum++;
+							itemLine += item[i] + ",";
+						}
+						break;
+					case "RAC/NID":
+						if (!item[i].equals("")){
+							itemnum++;
+							itemLine += item[i] + ",";
+						}
+						break;
 					case "NumOfUpdates":
 						if (!item[i].equals("")) {
 							itemnum++;
@@ -281,16 +318,11 @@ public class CSVDataPreprocess {
 					default:
 						break;
 					}
-					if (csvTitle[i].equals("EndPoinType|IpAddress|TeId")
-							|| csvTitle[i].equals("ECGI|RATType|TAC")
-							|| csvTitle[i].equals("BSID")
-							|| csvTitle[i].equals("IMSI|NSAPI"))
-						continue;
 					if (item[i].equals(""))
 						System.out.println(linenum + ": " + csvTitle[i]
 								+ " contains null or invalid value!");
 				}
-				if (itemnum < 23) {
+				if (itemnum < 26) {
 					System.out.println(linenum + ": "
 							+ "lacks values, item num is " + itemnum);
 				} else {
