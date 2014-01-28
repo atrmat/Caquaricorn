@@ -37,6 +37,7 @@ if [ -z "$DST_FILE" ]; then
     echo "You must specify DST_FILE with -d option"
     exit
 fi
+# mahout using the space(not the ',') to split a num
 cp $SRC_FILE $DST_FILE
 sed -i "s/,/ /g" `grep "," -rl ./$DST_FILE`
 gawk '{print NF}' $DST_FILE | sort -nu | more
