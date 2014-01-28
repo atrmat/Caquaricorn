@@ -1,0 +1,36 @@
+###################################################################################
+Java crawl
+###################################################################################
+Environment:
+
+JDK 1.7
+Eclipse Kepler
+Jsoup 1.7.3
+fastjson 1.1.34
+httpclient 4.3.1
+solr
+tomcat 7
+Fiddler 4.4.5.9
+###################################################################################
+Thinking line:
+
+1. simulate broswer to login or using the login cookie to send request to sina server
+2. the cookie string in the request header that can be captured by Fiddler
+3. using httpclient or Jsoup to connect the sina server to get weibo context
+4. using Jsoup to resolve the weibo page
+###################################################################################
+Code:
+
+https://github.com/Siriuser/WeiboCrawler
+###################################################################################
+Reference:
+
+新浪微博搜索结果数据抓取
+http://blog.csdn.net/memray/article/details/8822685
+
+利用jsoup爬虫优酷、土豆等视频网站rss利用solr创建索引
+http://blog.csdn.net/htw2012/article/details/17139573
+
+基于HttpClient4.0的网络爬虫基本框架（Java实现）
+http://www.cnblogs.com/yuki-lau/archive/2013/02/27/2934672.html
+###################################################################################
