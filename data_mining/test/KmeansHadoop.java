@@ -20,6 +20,7 @@ import org.apache.mahout.clustering.kmeans.KMeansDriver;
 import org.apache.mahout.clustering.kmeans.RandomSeedGenerator;
 import org.apache.mahout.common.distance.DistanceMeasure;
 import org.apache.mahout.math.Vector;
+import org.apache.mahout.utils.clustering.CSVClusterWriter;
 import org.apache.mahout.utils.clustering.ClusterDumper;
 
 public class KmeansHadoop {
@@ -32,7 +33,7 @@ public class KmeansHadoop {
 	private String seeds = inPath + "/seeds";
 	private String outPath = inPath + "/result/";
 	private String clusteredPoints = outPath + "/clusteredPoints";
-	private String clusterResultFile = outPath + "/clusterResultFile.csv";
+	private String clusterResultFile = outPath + "/clusterResultFile_";
 
 	public HdfsDAO getHdfs() {
 		return hdfs;
@@ -78,7 +79,12 @@ public class KmeansHadoop {
 
 		// hdfs.copyFile(localFile, inPath);
 		hdfs.ls(inPath);
-
+		Path outGlobPath;
+		Path clusteredPointsPath;
+		int maxIterations = 2;
+		if (hdfs.getMaxIterations()> 0){
+			maxIterations = hdfs.getMaxIterations();
+		}
 		if (hdfs.isUsing_canopy()) {
 			// using Canopy + Kmeans
 			DistanceMeasure measure = new ATRDistanceMeasure();
@@ -102,18 +108,21 @@ public class KmeansHadoop {
 			if (hdfs.getCluster_method().equals("fuzzyKmeans")) {
 				// running fuzzy-kmeans
 				FuzzyKMeansDriver.run(conf, seqFilePath, new Path(canopyOutput,
-						Cluster.INITIAL_CLUSTERS_DIR + "-final"), outputPath,
-						measure, 0.01, 10, 2, true, true, 0.0, false);
+						Cluster.INITIAL_CLUSTERS_DIR + "-final"), new Path(outPath),
+						measure, 0.01, maxIterations, 2, true, true, 0.0, false);
 			} else if (hdfs.getCluster_method().equals("kmeans")) {
 				KMeansDriver.run(conf, seqFilePath, new Path(canopyOutput,
-						Cluster.INITIAL_CLUSTERS_DIR + "-final"), outputPath,
-						measure, 0.01, 10, true, 0.1, false);
+						Cluster.INITIAL_CLUSTERS_DIR + "-final"), new Path(outPath),
+						measure, 0.01, maxIterations, true, 0.01, false);
 			}
+			outGlobPath = new Path(outPath, "clusters-*-final");//
+			clusteredPointsPath = new Path(clusteredPoints);
+
 		} else {// not using canopy
 			// using Kmeans only
 			InputDriver.runJob(new Path(inPath), new Path(seqFile),
 					"org.apache.mahout.math.RandomAccessSparseVector");
-			int k = 3;
+			int k = 6;
 			Path seqFilePath = new Path(seqFile);
 			Path clustersSeeds = new Path(seeds);
 			// DistanceMeasure measure = new EuclideanDistanceMeasure();
@@ -123,69 +132,81 @@ public class KmeansHadoop {
 					clustersSeeds, k, measure);
 			if (hdfs.getCluster_method().equals("kmeans")) {// running kmeans
 				KMeansDriver.run(conf, seqFilePath, clustersSeeds, new Path(
-						outPath), measure, 0.01, 10, true, 0.01, false);
+						outPath), measure, 0.01, maxIterations, true, 0.01, false);
 			} else if (hdfs.getCluster_method().equals("fuzzyKmeans"))// running
 																		// fuzzy-kmeans
 				FuzzyKMeansDriver.run(conf, seqFilePath, clustersSeeds,
-						new Path(outPath), measure, 0.01, 10, 2, true, true,
+						new Path(outPath), measure, 0.01, maxIterations, 2, true, true,
 						0.0, false);
 
+			outGlobPath = new Path(outPath, "clusters-*-final");
+			clusteredPointsPath = new Path(clusteredPoints);
 		}
 		//
-		Path outGlobPath = new Path(outPath, "clusters-*-final");
-		Path clusteredPointsPath = new Path(clusteredPoints);
 
 		System.out
 				.printf("Dumping out clusters from clusters: %s and clusteredPoints: %s\n",
 						outGlobPath, clusteredPointsPath);
-
-		ClusterDumper clusterDumper = new ClusterDumper(outGlobPath,
-				clusteredPointsPath);
-		// String [] argStr = {"of","CSV","e","true"};
-		// clusterDumper.run(argStr);
-		clusterDumper.printClusters(null);
+		
+//		ClusterDumper clusterDumper = new ClusterDumper(outGlobPath,
+//				clusteredPointsPath);
+//		clusterDumper.printClusters(null);
 		// System.out.println("using the display cluster function:");
-		displayCluster(clusterDumper);
+		
+		MyClusterDumper myClusterDumper = new MyClusterDumper(outGlobPath, clusteredPointsPath);
+		myClusterDumper.printClusters(null);
+		displayCluster(myClusterDumper);
 	}
 
 	public static void main(String[] args) throws Exception {
 		KmeansHadoop kmeansHadoop = new KmeansHadoop();
 	}
 
-	public void displayCluster(ClusterDumper clusterDumper) throws Exception,
+	public void displayCluster(MyClusterDumper myClusterDumper) throws Exception,
 			IOException {
-		Iterator<Integer> keys = clusterDumper.getClusterIdToPoints().keySet()
-				.iterator();
+		Iterator<Integer> keys = myClusterDumper.getClusterIdToPoints().keySet().iterator();
 		FileSystem fs = FileSystem.get(
 				URI.create(this.getHdfs().getHdfsPath()), this.getConf());
 		FSDataOutputStream os = null;
-		os = fs.create(new Path(clusterResultFile));
+		String ClusterStats = "";
 		// os.writeBytes("Center: ");
 		String clusterPoint = "";
 		int centerNum = 0;
+		int clusterNum = 0;
 		while (keys.hasNext()) {
+			ClusterStats+="cluster "+centerNum+" has ";
+			os = fs.create(new Path(clusterResultFile+centerNum+".csv"));
 			Integer center = keys.next();
-			System.out.println("Center:" + center);
-			try {
-				os.writeBytes("center: " + center + "\n");
-				centerNum++;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			for (WeightedVectorWritable point : clusterDumper
+			System.out.println("Center: " + center);
+//			try {
+//				os.writeBytes("center: " + center + "\n");
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+			clusterNum = 0;
+			for (WeightedVectorWritable point : myClusterDumper
 					.getClusterIdToPoints().get(center)) {
 				Vector v = point.getVector();
+				clusterNum++;
 				// System.out.println(v.get(0) + " " + v.get(1));
 				for (int i = 0; i < v.size() - 1; i++)
 					clusterPoint += v.get(i) + ",";
 				clusterPoint += v.get(v.size() - 1) + "\n";
 				os.writeBytes(clusterPoint);
 				clusterPoint = "";
-			}
+			}// for-loop
+//			os.writeBytes("cluster num: "+ clusterNum);
+			centerNum++;
+			ClusterStats+="num of "+clusterNum+"\n";
 			os.writeBytes("\n");
-		}
-		os.writeBytes("center num is " + centerNum);
+			os.flush();
+			os.close();
+//			os.writeBytes("center num is " + centerNum);
+		}// while-loop
+		os = fs.create(new Path(clusterResultFile+"stats"));
+		os.writeBytes(ClusterStats);
+		os.close();
 		fs.close();
 		System.out.println("center num is " + centerNum);
 	}
