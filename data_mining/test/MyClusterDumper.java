@@ -136,9 +136,11 @@ public final class MyClusterDumper extends AbstractJob {
       maxPointsPerCluster = Long.MAX_VALUE;
     }
     runEvaluation = hasOption(EVALUATE_CLUSTERS);
+    log.info("0. runEvaluation: "+runEvaluation);
+    runEvaluation = true;
     String distanceMeasureClass = getOption(DefaultOptionCreator.DISTANCE_MEASURE_OPTION);
     measure = ClassUtils.instantiateAs(distanceMeasureClass, DistanceMeasure.class);
-
+    log.info("measure");
     init();
     printClusters(null);
     return 0;
@@ -178,8 +180,10 @@ public final class MyClusterDumper extends AbstractJob {
     try {
       long numWritten = clusterWriter.write(new SequenceFileDirValueIterable<ClusterWritable>(new Path(seqFileDir,
           "part-*"), PathType.GLOB, conf));
-
       writer.flush();
+      runEvaluation = true;
+      log.info("running Evaluation: "+runEvaluation);
+      measure = new ATRDistanceMeasure();
       if (runEvaluation) {
         HadoopUtil.delete(conf, new Path("tmp/representative"));
         int numIters = 5;

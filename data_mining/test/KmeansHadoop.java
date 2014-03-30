@@ -81,9 +81,13 @@ public class KmeansHadoop {
 		hdfs.ls(inPath);
 		Path outGlobPath;
 		Path clusteredPointsPath;
-		int maxIterations = 2;
-		if (hdfs.getMaxIterations()> 0){
+		int maxIterations = 2; //default Max Iterations
+		if (hdfs.getMaxIterations() > 0){
 			maxIterations = hdfs.getMaxIterations();
+		}
+		double convergenceDelta = 0.01;// default convergenceDelta
+		if (hdfs.getConvergenceDelta() > 0){
+			convergenceDelta = hdfs.getConvergenceDelta();
 		}
 		if (hdfs.isUsing_canopy()) {
 			// using Canopy + Kmeans
@@ -109,11 +113,11 @@ public class KmeansHadoop {
 				// running fuzzy-kmeans
 				FuzzyKMeansDriver.run(conf, seqFilePath, new Path(canopyOutput,
 						Cluster.INITIAL_CLUSTERS_DIR + "-final"), new Path(outPath),
-						measure, 0.01, maxIterations, 2, true, true, 0.0, false);
+						measure, convergenceDelta, maxIterations, 2, true, true, 0.1, false);
 			} else if (hdfs.getCluster_method().equals("kmeans")) {
 				KMeansDriver.run(conf, seqFilePath, new Path(canopyOutput,
 						Cluster.INITIAL_CLUSTERS_DIR + "-final"), new Path(outPath),
-						measure, 0.01, maxIterations, true, 0.01, false);
+						measure, convergenceDelta, maxIterations, true, 0.01, false);
 			}
 			outGlobPath = new Path(outPath, "clusters-*-final");//
 			clusteredPointsPath = new Path(clusteredPoints);
@@ -132,12 +136,12 @@ public class KmeansHadoop {
 					clustersSeeds, k, measure);
 			if (hdfs.getCluster_method().equals("kmeans")) {// running kmeans
 				KMeansDriver.run(conf, seqFilePath, clustersSeeds, new Path(
-						outPath), measure, 0.01, maxIterations, true, 0.01, false);
+						outPath), measure, convergenceDelta, maxIterations, true, 0.01, false);
 			} else if (hdfs.getCluster_method().equals("fuzzyKmeans"))// running
 																		// fuzzy-kmeans
 				FuzzyKMeansDriver.run(conf, seqFilePath, clustersSeeds,
-						new Path(outPath), measure, 0.01, maxIterations, 2, true, true,
-						0.0, false);
+						new Path(outPath), measure, convergenceDelta, maxIterations, 2, true, true,
+						0.1, false);
 
 			outGlobPath = new Path(outPath, "clusters-*-final");
 			clusteredPointsPath = new Path(clusteredPoints);
@@ -174,9 +178,10 @@ public class KmeansHadoop {
 		int centerNum = 0;
 		int clusterNum = 0;
 		while (keys.hasNext()) {
-			ClusterStats+="cluster "+centerNum+" has ";
-			os = fs.create(new Path(clusterResultFile+centerNum+".csv"));
 			Integer center = keys.next();
+//			ClusterStats+="cluster "+center+" has ";
+			ClusterStats+=center+",";
+			os = fs.create(new Path(clusterResultFile+center+".csv"));
 			System.out.println("Center: " + center);
 //			try {
 //				os.writeBytes("center: " + center + "\n");
@@ -198,7 +203,8 @@ public class KmeansHadoop {
 			}// for-loop
 //			os.writeBytes("cluster num: "+ clusterNum);
 			centerNum++;
-			ClusterStats+="num of "+clusterNum+"\n";
+//			ClusterStats+="num of "+clusterNum+"\n";
+			ClusterStats+=clusterNum+"\n";
 			os.writeBytes("\n");
 			os.flush();
 			os.close();
