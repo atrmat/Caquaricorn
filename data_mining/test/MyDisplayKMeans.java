@@ -72,12 +72,14 @@ public class MyDisplayKMeans extends DisplayClustering {
     double convergenceDelta = 0.001;
     int numClusters = 3;
     int maxIterations = 10;
+    
     if (runClusterer) {
       runSequentialKMeansClusterer(conf, samples, output, measure, numClusters, maxIterations, convergenceDelta);
     } else {
       runSequentialKMeansClassifier(conf, samples, output, measure, numClusters, maxIterations, convergenceDelta);
     }
     new MyDisplayKMeans();
+    //Kmeans + Canopy
     runSequentialKMeansCanopyClusterer(conf, samples, output1, measure, numClusters, maxIterations, convergenceDelta);
     new MyDisplayKMeans(true);
   }
@@ -106,7 +108,12 @@ public class MyDisplayKMeans extends DisplayClustering {
     throws IOException, InterruptedException, ClassNotFoundException {
     Path clustersIn = new Path(output, "random-seeds");
     RandomSeedGenerator.buildRandom(conf, samples, clustersIn, numClusters, measure);
+    long timeStart;
+    long timeStop;
+    timeStart = System.currentTimeMillis();
     KMeansDriver.run(samples, clustersIn, output, measure, convergenceDelta, maxIterations, true, 0.0, true);
+    timeStop = System.currentTimeMillis();
+    System.out.println("Kmeans: "+(timeStop-timeStart));
     loadClustersWritable(output);
   }
   private static void runSequentialKMeansCanopyClusterer(Configuration conf, Path samples, Path output,
@@ -115,8 +122,18 @@ public class MyDisplayKMeans extends DisplayClustering {
 		    Path canopyOutput = new Path("Canopies");
 		    HadoopUtil.delete(conf, canopyOutput);
 //		    RandomSeedGenerator.buildRandom(conf, samples, clustersIn, numClusters, measure);
+		    long timeStart;
+		    long timeStop;
+		    //canopy
+		    timeStart = System.currentTimeMillis();
 		    CanopyDriver.buildClusters(conf, samples, canopyOutput, new ManhattanDistanceMeasure(), T1, T2, 0, true);
+		    timeStop = System.currentTimeMillis();
+		    System.out.println("canopy: "+(timeStop-timeStart));
+		    //kmeans
+		    timeStart = System.currentTimeMillis();
 		    KMeansDriver.run(samples, new Path(canopyOutput,Cluster.INITIAL_CLUSTERS_DIR + "-final"), output, measure, convergenceDelta, maxIterations, true, 0.0, true);
+		    timeStop = System.currentTimeMillis();
+		    System.out.println("Kmeans+canopy: "+(timeStop-timeStart));
 		    loadClustersWritable(output);
 		  }
   // Override the paint() method

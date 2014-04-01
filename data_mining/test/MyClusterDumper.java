@@ -13,6 +13,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.mapred.JobConf;
 import org.apache.mahout.clustering.cdbw.CDbwEvaluator;
 import org.apache.mahout.clustering.classify.WeightedVectorWritable;
 import org.apache.mahout.clustering.evaluation.ClusterEvaluator;
@@ -148,12 +149,17 @@ public final class MyClusterDumper extends AbstractJob {
 
   public void printClusters(String[] dictionary) throws Exception {
     Configuration conf = new Configuration();
-
+	HdfsDAO hdfs;
+	JobConf conf1;
+    hdfs = new HdfsDAO();
+	conf1 = hdfs.config();
+	hdfs.setConf(conf1);
+	hdfs.readHadoopProperties("./hadoop.properties");
     if (this.termDictionary != null) {
       if ("text".equals(dictionaryFormat)) {
         dictionary = VectorHelper.loadTermDictionary(new File(this.termDictionary));
       } else if ("sequencefile".equals(dictionaryFormat)) {
-        dictionary = VectorHelper.loadTermDictionary(conf, this.termDictionary);
+        dictionary = VectorHelper.loadTermDictionary(conf1, this.termDictionary);
       } else {
         throw new IllegalArgumentException("Invalid dictionary format");
       }
@@ -169,7 +175,7 @@ public final class MyClusterDumper extends AbstractJob {
       shouldClose = true;
       if (outputFile.getName().startsWith("s3n://")) {
         Path p = outputPath;
-        FileSystem fs = FileSystem.get(p.toUri(), conf);
+        FileSystem fs = FileSystem.get(p.toUri(), conf1);
         writer = new OutputStreamWriter(fs.create(p), Charsets.UTF_8);
       } else {
         Files.createParentDirs(outputFile);
@@ -179,13 +185,13 @@ public final class MyClusterDumper extends AbstractJob {
     ClusterWriter clusterWriter = createClusterWriter(writer, dictionary);
     try {
       long numWritten = clusterWriter.write(new SequenceFileDirValueIterable<ClusterWritable>(new Path(seqFileDir,
-          "part-*"), PathType.GLOB, conf));
+          "part-*"), PathType.GLOB, conf1));
       writer.flush();
       runEvaluation = true;
       log.info("running Evaluation: "+runEvaluation);
       measure = new ATRDistanceMeasure();
       if (runEvaluation) {
-        HadoopUtil.delete(conf, new Path("tmp/representative"));
+        HadoopUtil.delete(conf1, new Path("tmp/representative"));
         int numIters = 5;
         RepresentativePointsDriver.main(new String[]{
           "--input", seqFileDir.toString(),
@@ -194,13 +200,16 @@ public final class MyClusterDumper extends AbstractJob {
           "--distanceMeasure", measure.getClass().getName(),
           "--maxIter", String.valueOf(numIters)
         });
-        conf.set(RepresentativePointsDriver.DISTANCE_MEASURE_KEY, measure.getClass().getName());
-        conf.set(RepresentativePointsDriver.STATE_IN_KEY, "tmp/representative/representativePoints-" + numIters);
-        ClusterEvaluator ce = new ClusterEvaluator(conf, seqFileDir);
+        conf1.set(RepresentativePointsDriver.DISTANCE_MEASURE_KEY, measure.getClass().getName());
+        conf1.set(RepresentativePointsDriver.STATE_IN_KEY, "tmp/representative/representativePoints-" + numIters);
+        log.info(seqFileDir.toString());
+//        ClusterEvaluator ce = new ClusterEvaluator(conf1, seqFileDir);
+        ClusterEvaluator ce = new ClusterEvaluator(conf1, seqFileDir);
+        
         writer.append("\n");
         writer.append("Inter-Cluster Density: ").append(String.valueOf(ce.interClusterDensity())).append("\n");
         writer.append("Intra-Cluster Density: ").append(String.valueOf(ce.intraClusterDensity())).append("\n");
-        CDbwEvaluator cdbw = new CDbwEvaluator(conf, seqFileDir);
+        CDbwEvaluator cdbw = new CDbwEvaluator(conf1, seqFileDir);
         writer.append("CDbw Inter-Cluster Density: ").append(String.valueOf(cdbw.interClusterDensity())).append("\n");
         writer.append("CDbw Intra-Cluster Density: ").append(String.valueOf(cdbw.intraClusterDensity())).append("\n");
         writer.append("CDbw Separation: ").append(String.valueOf(cdbw.separation())).append("\n");
