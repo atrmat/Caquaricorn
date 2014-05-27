@@ -1,5 +1,5 @@
 #preprocessing the data file before clustering
-
+#generate the new data file and replaced the dot with space in csv files
 SRC_FILE=
 DST_FILE=
 usage()

@@ -1,0 +1,46 @@
+###################################################################################
+Environment:
+Ubuntu 13.10
+g++ 4.8.1
+scipy 0.12.0
+numpy 1.7.1
+pip 1.4.1
+nose 1.3.0
+libopenblas 0.2.8
+
+###################################################################################
+Installation:
+1. install the environment: numpy and scipy
+$sudo apt-get install python-numpy python-scipy python-dev python-pip python-nose libopenblas-dev
+(you can using dpkg to install the debian package instead)
+2. install the theano by pip:
+$sudo pip install --upgrade theano
+
+###################################################################################
+Test:
+1. test the numpy:
+$python -c "import numpy; numpy.test()"
+2. test the scipy
+$python -c "import scipy; scipy.test()"
+3. test the Theano
+$python -c "import theano; theano.test()"
+4. test the Theano/BLAS
+python `python -c "import os, theano; print os.path.dirname(theano.__file__)"`/misc/check_blas.py
+
+###################################################################################
+GPU instruction:
+
+###################################################################################
+Deep learning using theano:
+1. git clone the DeepLearningTutorials
+$git clone git://github.com/lisa-lab/DeepLearningTutorials.git
+2. start from DeepLearningTutorials
+
+###################################################################################
+Reference:
+1. http://deeplearning.net/software/theano/install_ubuntu.html#install-ubuntu
+2. http://www.cnblogs.com/xueliangliu/archive/2013/04/03/2997437.html
+3. http://www.cnblogs.com/xueliangliu/archive/2013/04/07/3006014.html
+4. http://www.melory.me/2013/11/24/theano-tutorial-logistic-regression/ 
+###################################################################################
+
