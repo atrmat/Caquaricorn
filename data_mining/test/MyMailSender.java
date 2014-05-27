@@ -19,9 +19,9 @@ public class MyMailSender
 {
     private String hostName = "smtp.gmail.com";
     private String userName = "atrftpmail@gmail.com";
-    private String userPwd = "";
+    private String userPwd = "atr123456";
     private String fromUserMail = "atrftpmail@gmail.com";
-    private String toUserMail = "";
+    private String toUserMail = "821764148@qq.com";
 
     public void sendTestMail() throws AddressException, MessagingException
     {

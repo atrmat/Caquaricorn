@@ -257,7 +257,11 @@ public class HiveJdbcClientTest {
 //		sql = "select a, aw/4, bc/4, bi/4, bo/4, bu/4, ca/4 from rawdata80w";
 
 //		sql = "select count(DISTINCT a) from rawdata80w where aw=3 and bc=1";
-		sql = "select count(DISTINCT a) from rawdata80w where al=0 & an=0 & am=0 & ao=1 & ap=3 & aq=0";
+//		sql = "select count(DISTINCT a) from rawdata80w where al=0 & an=0 & am=0 & ao=1 & ap=3 & aq=0";
+		sql = "select a, ar/24, as/24, at/24, au/24, av/24, aw/24, ax/24, ay/24, az/24, "
+				+ "ba/24, bb/24, bc/24, bd/24, be/24, bf/24, bg/24, bh/24, bi/24, bj/24,"
+				+ " bk/24, bl/24, bm/24, bn/24, bo/24, bp/24, bp/24, br/24, bs/24, bt/24,"
+				+ " bu/24, bv/24, bw/24, bx/24, by/24, bz/24, ca/24 from rawdata80w";
 		hiveJdbcClient.querySQL(sql);
 	}
 	
@@ -265,12 +269,15 @@ public class HiveJdbcClientTest {
 	public void testCalcStates() throws SQLException, IOException{
 		HiveJdbcClient hiveJdbcClient = new HiveJdbcClient();
 //		hiveJdbcClient.calcStates();
+		System.out.println("========================1========================");
+		String[] a1 = {"ar", "ax", "bd", "bj", "bp", "bv"};
+		hiveJdbcClient.calcStates2(1, a1);
 		System.out.println("========================2========================");
 		String[] a2 = {"as", "ay", "be", "bk", "bq", "bw"};
 		hiveJdbcClient.calcStates2(2, a2);
-		System.out.println("========================3========================");
-		String[] a3 = {"at", "az", "bf", "bl", "br", "bx"};
-		hiveJdbcClient.calcStates2(3, a3);
+//		System.out.println("========================3========================");
+//		String[] a3 = {"at", "az", "bf", "bl", "br", "bx"};
+//		hiveJdbcClient.calcStates2(3, a3);
 		System.out.println("========================4========================");
 		String[] a4 = {"au", "ba", "bg", "bm", "bs", "by"};
 		hiveJdbcClient.calcStates2(4, a4);

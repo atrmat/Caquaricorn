@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-/**
-* read the config from the hadoop.properties file
-*/
+
 public class readHadoopProperties {
 
 	public readHadoopProperties() throws IOException {
@@ -20,8 +18,8 @@ public class readHadoopProperties {
 		   p.load(inputStream);   
 		  } catch (IOException e1) {   
 		   e1.printStackTrace();   
-		  }   
-		System.out.println("ip:"+p.getProperty("hdfs-ip"));  
+		  }
+		System.out.println("datafile:"+p.getProperty("datafile")+"/");
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

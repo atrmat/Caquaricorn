@@ -159,7 +159,7 @@ public class KmeansHadoop {
 		
 		MyClusterDumper myClusterDumper = new MyClusterDumper(new Path(outPath, "clusters-"+maxIterations+"-final"), clusteredPointsPath);
 		myClusterDumper.printClusters(null);
-//		displayCluster(myClusterDumper);
+		displayCluster(myClusterDumper);
 	}
 
 	public static void main(String[] args) throws Exception {

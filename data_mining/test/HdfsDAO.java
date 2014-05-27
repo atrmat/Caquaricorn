@@ -15,6 +15,8 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.security.proto.SecurityProtos.*;
 import org.apache.hadoop.ipc.*;
 
@@ -34,7 +36,15 @@ public class HdfsDAO {
 	private static double canopy_t1;
 	private static double canopy_t2;
 	private static String cluster_method;//choose the clustering method
+	private static int maxIterations;
+	private static double convergenceDelta;
 	
+	public static double getConvergenceDelta() {
+		return convergenceDelta;
+	}
+	public static void setConvergenceDelta(double convergenceDelta) {
+		HdfsDAO.convergenceDelta = convergenceDelta;
+	}
 	public static String getCluster_method() {
 		return cluster_method;
 	}
@@ -105,6 +115,8 @@ public class HdfsDAO {
 		canopy_t2 = new Double(p.getProperty("canopy_t2"));
 		System.out.println("canopy threadhold: "+canopy_t1+","+canopy_t2);
 		setCluster_method(p.getProperty("cluster_method"));
+		setMaxIterations(new Integer(p.getProperty("maxIterations")));
+		setConvergenceDelta(new Double(p.getProperty("convergenceDelta")));
 	}
 
 	/**
@@ -249,5 +261,11 @@ public class HdfsDAO {
 	}
 	public void setUsing_canopy(boolean using_canopy) {
 		this.using_canopy = using_canopy;
+	}
+	public static int getMaxIterations() {
+		return maxIterations;
+	}
+	public static void setMaxIterations(int maxIterations) {
+		HdfsDAO.maxIterations = maxIterations;
 	}
 }

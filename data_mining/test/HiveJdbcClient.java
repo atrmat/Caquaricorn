@@ -1,9 +1,11 @@
 package atrmat;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -154,18 +156,104 @@ public class HiveJdbcClient {
 
 	public void querySQL(String sql) throws SQLException, IOException{
 		ResultSet res;
+		int countNum = 0;
+		String splitSymbol = ",";// write the split symbol into the files
 		System.out.println("Running: " + sql);
 		res = stmt.executeQuery(sql);
-//		File file = new File("querySQL"+".csv");// output the preprocessed file
-//		FileOutputStream out = new FileOutputStream(file);
-//		OutputStreamWriter osw = new OutputStreamWriter(out, "UTF8");
-//		BufferedWriter bw = new BufferedWriter(osw);
+		File file = new File("querySQL"+".csv");// output the preprocessed file
+		FileOutputStream out = new FileOutputStream(file);
+		OutputStreamWriter osw = new OutputStreamWriter(out, "UTF8");
+		BufferedWriter bw = new BufferedWriter(osw);
 //		bw.write(sql+"\n");
 		while (res.next()) {
-			System.out.println(res.getString(1));
+			countNum++;
+			bw.write(res.getString(1)+splitSymbol+res.getDouble(2)+splitSymbol+res.getDouble(3)+splitSymbol+res.getDouble(4)+splitSymbol+res.getDouble(5)+splitSymbol+res.getDouble(6)+splitSymbol+res.getDouble(7)
+					+splitSymbol+res.getDouble(8)+splitSymbol+res.getDouble(9)+splitSymbol+res.getDouble(10)+splitSymbol+res.getDouble(11)+splitSymbol+res.getDouble(12)+splitSymbol+res.getDouble(13)+splitSymbol+res.getDouble(14)
+					+splitSymbol+res.getDouble(15)+splitSymbol+res.getDouble(16)+splitSymbol+res.getDouble(17)+splitSymbol+res.getDouble(18)+splitSymbol+res.getDouble(19)+splitSymbol+res.getDouble(20)+splitSymbol+res.getDouble(21)
+					+splitSymbol+res.getDouble(22)+splitSymbol+res.getDouble(23)+splitSymbol+res.getDouble(24)+splitSymbol+res.getDouble(25)+splitSymbol+res.getDouble(26)+splitSymbol+res.getDouble(27)+splitSymbol+res.getDouble(28)
+					+splitSymbol+res.getDouble(29)+splitSymbol+res.getDouble(30)+splitSymbol+res.getDouble(31)+splitSymbol+res.getDouble(32)+splitSymbol+res.getDouble(33)+splitSymbol+res.getDouble(34)+splitSymbol+res.getDouble(35)
+					+splitSymbol+res.getDouble(36)+splitSymbol+res.getDouble(37)+"\n");
+//			System.out.println(res.getLong(1));
+//			System.out.println(res.getString(1)+","+res.getDouble(2)+","+res.getDouble(3)+","+res.getDouble(4)+","+res.getDouble(5)+","+res.getDouble(6)+","+res.getDouble(7));
+//			bw.write(res.getString(1)+splitSymbol+res.getDouble(2)+splitSymbol+res.getDouble(3)+splitSymbol+res.getDouble(4)+splitSymbol+res.getDouble(5)+splitSymbol+res.getDouble(6)+splitSymbol+res.getDouble(7)+"\n");
 //			bw.write(res.getString(1)+","+res.getString(2)+","+res.getString(3)+"\n");
 		}
-//		bw.close();
+//		bw.write("count Num: "+countNum);
+		bw.close();
+	}
+	
+	public void calcStates()throws SQLException, IOException{
+		ResultSet res;
+		String sql;
+		String line = "";
+		BufferedReader bufferedReader = new BufferedReader(new FileReader("permute.csv"));
+		bufferedReader.readLine();
+		String []attributes = {"ar", "ax", "bd", "bj", "bp", "bv"};
+		File file = new File("permute_1.csv");
+		FileOutputStream out = new FileOutputStream(file);
+		OutputStreamWriter osw = new OutputStreamWriter(out, "UTF8");
+		BufferedWriter bw = new BufferedWriter(osw);
+		bw.write("A,B,C,D,E,F,sum\n");
+//		int n = 0;
+		while ((line = bufferedReader.readLine())!= null){
+//			n++;
+//			if (n > 2)
+//				break;
+			String[] tmp = line.split(",");
+			int len = tmp.length-1;
+			sql = "select count(DISTINCT a) from rawdata80w where ";
+			for (int i = 0; i < len; i++){
+				sql += attributes[i]+"="+tmp[i]+" & ";
+				bw.write(tmp[i]+",");
+			}
+			sql += attributes[len]+"="+tmp[len];
+			bw.write(tmp[len]+",");
+			// hive sql processing
+			System.out.println(sql);
+			res = stmt.executeQuery(sql);
+			while(res.next()){
+				bw.write(res.getLong(1)+"\n");
+				System.out.println(res.getLong(1));
+			}
+		}
+		bw.close();
+		osw.close();
+		out.close();		
+	}
+	
+	public void calcStates2(int num, String[] attributes)throws SQLException, IOException{
+		ResultSet res;
+		String sql;
+		String line = "";
+		BufferedReader bufferedReader = new BufferedReader(new FileReader("permute_3.csv"));
+		// order by this bufferedReader to query others
+		bufferedReader.readLine();
+		File file = new File("permute_"+num+".csv");
+		FileOutputStream out = new FileOutputStream(file);
+		OutputStreamWriter osw = new OutputStreamWriter(out, "UTF8");
+		BufferedWriter bw = new BufferedWriter(osw);
+		bw.write("A,B,C,D,E,F,sum\n");
+		while ((line = bufferedReader.readLine())!= null){
+			String[] tmp = line.split(",");
+			int len = tmp.length-2;
+			sql = "select count(DISTINCT a) from rawdata80w where ";
+			for (int i = 0; i < len; i++){
+				sql += attributes[i]+"="+tmp[i]+" & ";
+				bw.write(tmp[i]+",");
+			}
+			sql += attributes[len]+"="+tmp[len];
+			bw.write(tmp[len]+",");
+			// hive sql processing
+			System.out.println(sql);
+			res = stmt.executeQuery(sql);
+			while(res.next()){
+				bw.write(res.getLong(1)+"\n");
+				System.out.println(res.getLong(1));
+			}
+		}
+		bw.close();
+		osw.close();
+		out.close();		
 	}
 	
 	public HiveJdbcClient() throws SQLException {
